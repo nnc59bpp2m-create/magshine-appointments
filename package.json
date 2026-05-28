@@ -1,0 +1,17 @@
+{
+  "name": "magshine-appointment-system",
+  "version": "1.0.0",
+  "description": "Appointment booking system for MagShine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "appointment",
+    "booking",
+    "magshine"
+  ],
+  "author": "",
+  "license": "ISC"
+}
