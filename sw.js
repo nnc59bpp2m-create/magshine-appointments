@@ -2,10 +2,10 @@ const CACHE_NAME = 'magshine-appointments-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/sw.js',
 ];
 
-// Install a service worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -16,7 +16,6 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Cache and return requests
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
@@ -27,7 +26,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Update a service worker
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
