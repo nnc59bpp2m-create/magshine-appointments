@@ -1,0 +1,1 @@
+{"name": "Magshine Booking", "short_name": "Magshine", "description": "Book your car service appointment", "start_url": "/", "display": "standalone", "background_color": "#0f172a", "theme_color": "#0f172a", "icons": [{"src": "/static/icon.png", "sizes": "192x192", "type": "image/png"}]}

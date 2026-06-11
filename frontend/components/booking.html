@@ -1,0 +1,91 @@
+<section id="booking" class="relative py-30 bg-brand-bg">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(0,255,136,0.04),transparent_60%)] pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 relative">
+    <div class="text-center mb-12 section-reveal">
+      <span class="font-display font-bold text-label text-brand-accent tracking-widest">RESERVE</span>
+      <h2 class="font-display text-section-title text-white mt-4 tracking-tight">Book Your Appointment</h2>
+      <p class="mt-4 text-brand-textDim max-w-xl mx-auto">Select date, service, and time. We confirm within 2 hours.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 section-reveal">
+        <form id="bookForm" class="glass-strong rounded-3xl p-6 md:p-8 space-y-6" novalidate>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="bookingDate" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Date</label>
+              <input type="date" id="bookingDate" name="date" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required />
+            </div>
+            <div>
+              <label for="userSlot" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Time Slot</label>
+              <select id="userSlot" name="slot_time" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required>
+                <option value="">Select date first</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="bookName" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Full Name</label>
+              <input type="text" id="bookName" name="name" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="John Tan" required />
+            </div>
+            <div>
+              <label for="bookPhone" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Phone (WhatsApp)</label>
+              <input type="tel" id="bookPhone" name="phone" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="+60 18 215 3099" required />
+            </div>
+          </div>
+
+          <div>
+            <label for="bookEmail" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Email</label>
+            <input type="email" id="bookEmail" name="email" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="john@email.com" />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="serviceSelect" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Service</label>
+              <select id="serviceSelect" name="serviceId" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required>
+                <option value="">Select service</option>
+              </select>
+            </div>
+            <div>
+              <label for="bookVehicle" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Vehicle Registration</label>
+              <input type="text" id="bookVehicle" name="vehicleReg" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="ABC 1234" style="text-transform: uppercase" />
+            </div>
+          </div>
+
+          <div>
+            <label for="bookNotes" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Notes (optional)</label>
+            <textarea id="bookNotes" name="notes" rows="3" class="input-field w-full rounded-xl px-4 py-3.5 text-base resize-none" placeholder="Paint condition, specific concerns, color..."></textarea>
+          </div>
+
+          <button type="submit" id="bookBtn" class="btn-primary w-full py-4 rounded-xl text-base font-semibold">Confirm Booking</button>
+
+          <p class="text-xs text-brand-textDim/60 text-center">By submitting, you agree to our booking terms. No same-day bookings accepted.</p>
+        </form>
+      </div>
+
+      <aside class="lg:col-span-1 space-y-6">
+        <div class="glass-strong rounded-3xl p-6 section-reveal">
+          <h3 class="font-semibold text-white mb-4">What Happens Next</h3>
+          <ol class="space-y-4 text-sm text-brand-textDim">
+            <li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center font-bold text-xs text-brand-accent">1</span>We confirm via WhatsApp within 2 hours</li>
+            <li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center font-bold text-xs text-brand-accent">2</span>Drop off at our PJ studio (address sent on confirm)</li>
+            <li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center font-bold text-xs text-brand-accent">3</span>Receive progress updates &amp; completion photos</li>
+            <li class="flex gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center font-bold text-xs text-brand-accent">4</span>Collect — protected, documented, warranted</li>
+          </ol>
+        </div>
+
+        <div class="glass-strong rounded-3xl p-6 section-reveal">
+          <h3 class="font-semibold text-white mb-4">Studio Hours</h3>
+          <dl class="space-y-3 text-sm text-brand-textDim">
+            <div class="flex justify-between"><dt>Tue – Sat</dt><dd class="text-white font-medium">10:00 – 18:00</dd></div>
+            <div class="flex justify-between"><dt>Sun</dt><dd class="text-white font-medium">10:00 – 14:00</dd></div>
+            <div class="flex justify-between"><dt>Mon</dt><dd class="text-brand-accent font-medium">Closed</dd></div>
+          </dl>
+          <p class="mt-4 text-xs text-brand-textDim/60">Exclusively by appointment. Walk-ins not accepted.</p>
+        </div>
+
+        <div id="bookingsTable" class="section-reveal"></div>
+      </aside>
+    </div>
+  </div>
+</section>

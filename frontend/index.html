@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MagShine — Precision Auto Detailing</title>
+  <meta name="description" content="Paint correction, ceramic coatings &amp; PPF specialist in Petaling Jaya. Premium auto detailing engineered for perfection." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              bg: '#0D0D0D',
+              bgElevated: '#1A1A1A',
+              panel: '#111111',
+              panelAlt: '#161616',
+              border: '#2A2A2A',
+              borderBright: '#333333',
+              accent: '#00FF88',
+              accentDim: '#00CC6A',
+              accentGlow: 'rgba(0, 255, 136, 0.15)',
+              accentStrong: '#00FF99',
+              metallic: '#C0C0C0',
+              metallicDim: '#8A8A8A',
+              gold: '#FFD700',
+              goldDim: '#B8960D',
+              muted: '#6B6B6B',
+              text: '#FAFAFA',
+              textDim: '#CCCCCC',
+            }
+          },
+          fontFamily: {
+            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          fontSize: {
+            'hero': ['clamp(3.5rem, 12vw, 14rem)', { lineHeight: '0.92', letterSpacing: '-0.04em', fontWeight: '700' }],
+            'section-title': ['clamp(2rem, 6vw, 5rem)', { lineHeight: '1.0', letterSpacing: '-0.03em', fontWeight: '700' }],
+            'label': ['0.7rem', { letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: '600' }],
+          },
+          animation: {
+            'float-slow': 'float 20s ease-in-out infinite',
+            'float-medium': 'float 15s ease-in-out infinite',
+            'float-fast': 'float 12s ease-in-out infinite',
+            'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+            'shimmer': 'shimmer 2.5s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0) translateX(0) rotate(0deg)' },
+              '25%': { transform: 'translateY(-30px) translateX(20px) rotate(2deg)' },
+              '50%': { transform: 'translateY(20px) translateX(-15px) rotate(-1deg)' },
+              '75%': { transform: 'translateY(-15px) translateX(-25px) rotate(1deg)' },
+            },
+            'pulse-glow': {
+              '0%, 100%': { opacity: '0.15', transform: 'scale(1)' },
+              '50%': { opacity: '0.35', transform: 'scale(1.05)' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' },
+            },
+          },
+        },
+      },
+      plugins: [],
+    }
+  </script>
+  <link rel="stylesheet" href="/css/core.css" />
+  
+  <script type="importmap">
+  {
+    "imports": {
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.7/index.js",
+      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollTrigger.js",
+      "gsap/ScrollToPlugin": "https://cdn.jsdelivr.net/npm/gsap@3.12.7/ScrollToPlugin.js"
+    }
+  }
+  </script>
+</head>
+<body class="min-h-screen bg-brand-bg text-brand-text antialiased">
+  <header class="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-brand-border/30 backdrop-blur-xl bg-brand-bg/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3" aria-label="MagShine Home">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-accent to-brand-accentDim flex items-center justify-center shadow-lg shadow-brand-accent/30">
+          <svg class="w-5 h-5 text-bg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2 6 6 1-4 5 1 6-5-4-5 4 1-6 6-1-2 6"/><path d="M18 8l2 4-4 1 1 5"/></svg>
+        </div>
+        <span class="font-display font-bold tracking-wide text-white text-lg">MagShine</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-10">
+        <a href="#studio" class="text-sm text-brand-textDim hover:text-white transition-colors font-medium">In the Studio</a>
+        <a href="#street" class="text-sm text-brand-textDim hover:text-white transition-colors font-medium">On the Street</a>
+        <a href="#gallery" class="text-sm text-brand-textDim hover:text-white transition-colors font-medium">Gallery</a>
+        <a href="#booking" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold">Book Now</a>
+        <a id="ownerNav" href="/login" class="text-sm text-brand-textDim hover:text-white font-medium">Owner</a>
+      </nav>
+      <div class="md:hidden flex items-center gap-3">
+        <a href="#booking" class="btn-primary px-4 py-2 rounded-xl text-sm font-semibold">Book</a>
+        <button id="mobileMenuBtn" data-nav-toggle class="text-brand-textDim hover:text-white p-2" aria-label="Menu">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <div id="hero-container"></div>
+    <div id="studio-container"></div>
+    <div id="street-container"></div>
+    <div id="booking-container"></div>
+  </main>
+
+  <footer class="border-t border-brand-border bg-brand-panel/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col md:flex-row justify-between gap-4 text-xs text-brand-textDim/80">
+      <span>MagShine Auto Service &copy; 2025</span>
+      <span>E-G-45, Jalan PJU 1/45, Aman Suria Damansara, 47301 Petaling Jaya, Selangor, Malaysia</span>
+      <div class="flex items-center gap-4">
+        <a href="https://instagram.com" target="_blank" rel="noopener" class="hover:text-brand-accent transition-colors">Instagram</a>
+        <a href="https://wa.me/60182153099" target="_blank" rel="noopener" class="hover:text-brand-accent transition-colors">WhatsApp</a>
+        <a href="mailto:info@magshine.com.my" class="hover:text-brand-accent transition-colors">Email</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
