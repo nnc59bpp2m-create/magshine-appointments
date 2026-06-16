@@ -42,7 +42,41 @@ function removeToast(toast) {
   toast.addEventListener('transitionend', () => toast.remove(), { once: true });
 }
 
-// Confirmation modal
+// Announce to screen readers
+function announce(message) {
+  const liveRegion = document.getElementById('a11y-announcer') || createAnnouncer();
+  liveRegion.textContent = message;
+}
+
+function createAnnouncer() {
+  const div = document.createElement('div');
+  div.id = 'a11y-announcer';
+  div.setAttribute('role', 'status');
+  div.setAttribute('aria-live', 'polite');
+  div.setAttribute('aria-atomic', 'true');
+  div.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;';
+  document.body.appendChild(div);
+  return div;
+}
+
+// Skeleton loading for slot grid
+function renderSlotSkeletons(count = 8) {
+  const grid = document.getElementById('slot-grid');
+  if (!grid) return;
+  grid.innerHTML = Array.from({ length: count }, () => `
+    <div class="slot-skeleton h-12 rounded-xl animate-pulse" aria-hidden="true"></div>
+  `).join('');
+}
+
+// Skeleton loading for services dropdown
+function renderServiceSkeleton() {
+  const select = document.getElementById('serviceSelect');
+  if (!select) return;
+  select.innerHTML = '<option value="" disabled>Loading services...</option>';
+  select.disabled = true;
+}
+
+// Confirmation modal with enhanced UX
 function showConfirmationModal(bookingData) {
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
@@ -57,9 +91,11 @@ function showConfirmationModal(bookingData) {
   modal.innerHTML = `
     <div class="modal">
       <div class="modal-header">
-        <svg class="modal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20 6 9 17l-5-5"/>
-        </svg>
+        <div class="modal-icon-wrapper">
+          <svg class="modal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6 9 17l-5-5"/>
+          </svg>
+        </div>
         <h3 id="modal-title">Booking Confirmed</h3>
       </div>
       <div class="modal-body">
@@ -74,9 +110,10 @@ function showConfirmationModal(bookingData) {
           ${bookingData.vehicleReg ? `<div><dt>Vehicle</dt><dd>${bookingData.vehicleReg}</dd></div>` : ''}
           ${bookingData.notes ? `<div><dt>Notes</dt><dd>${bookingData.notes}</dd></div>` : ''}
         </dl>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary modal-close">Got it</button>
+        <div class="modal-actions">
+          <button class="btn-primary modal-close w-full sm:w-auto">Add to Calendar</button>
+          <button class="btn-secondary modal-close w-full sm:w-auto">Done</button>
+        </div>
       </div>
     </div>
   `;
@@ -84,13 +121,13 @@ function showConfirmationModal(bookingData) {
   document.body.appendChild(modal);
   requestAnimationFrame(() => modal.classList.add('show'));
   
-  const closeBtn = modal.querySelector('.modal-close');
+  const closeBtns = modal.querySelectorAll('.modal-close');
   const closeModal = () => {
     modal.classList.remove('show');
     modal.addEventListener('transitionend', () => modal.remove(), { once: true });
   };
   
-  closeBtn.addEventListener('click', closeModal);
+  closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
@@ -115,7 +152,52 @@ function showConfirmationModal(bookingData) {
   
   firstElement?.focus();
   
+  // Generate ICS for calendar
+  const calendarBtn = modal.querySelector('.btn-primary');
+  if (calendarBtn) {
+    calendarBtn.addEventListener('click', () => {
+      const icsContent = generateICS(bookingData, serviceName);
+      downloadICS(icsContent, `magshine-booking-${bookingData.date}.ics`);
+      showToast('Calendar file downloaded', 'success');
+    });
+  }
+  
   return modal;
+}
+
+function generateICS(bookingData, serviceName) {
+  const startDate = bookingData.date.replace(/-/g, '');
+  const [startHour, startMin] = bookingData.slot_time.split(':');
+  const endHour = parseInt(startHour) + 1;
+  const startTime = `${startDate}T${startHour}${startMin}00`;
+  const endTime = `${startDate}T${endHour.toString().padStart(2, '0')}${startMin}00`;
+  
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//MagShine//Booking//EN
+BEGIN:VEVENT
+UID:${bookingData.slot_time}-${bookingData.name}-${Date.now()}@magshine
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+DTSTART:${startTime}
+DTEND:${endTime}
+SUMMARY:MagShine Appointment: ${serviceName}
+DESCRIPTION:Appointment with MagShine for ${serviceName}.${bookingData.notes ? ` Notes: ${bookingData.notes}` : ''}
+LOCATION:MagShine Studio, E-G-45, Jalan PJU 1/45, Aman Suria Damansara, 47301 Petaling Jaya, Selangor, Malaysia
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+}
+
+function downloadICS(content, filename) {
+  const blob = new Blob([content], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 async function request(path, options = {}) {
@@ -166,37 +248,107 @@ export function initBookingForm(formSelector, options = {}) {
   if (!form) return;
 
   const dateInput = form.querySelector('[name="date"]') || document.getElementById('bookingDate');
-  const slotSelect = form.querySelector('[name="slot_time"]') || document.getElementById('userSlot');
+  const slotInput = form.querySelector('[name="slot_time"]') || document.getElementById('userSlot');
+  const slotGrid = document.getElementById('slot-grid');
   const serviceSelect = form.querySelector('[name="serviceId"]') || document.getElementById('serviceSelect');
   const bookBtn = form.querySelector('[type="submit"]') || document.getElementById('bookBtn');
+  const btnText = bookBtn?.querySelector('.btn-text');
+  const btnLoading = bookBtn?.querySelector('.btn-loading');
   const bookingsTable = document.getElementById('bookingsTable');
 
+  let selectedSlot = null;
+
   async function renderServices() {
+    renderServiceSkeleton();
     const services = await loadServices();
     if (serviceSelect) {
-      serviceSelect.innerHTML = '<option value="">Select service</option>' + services.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      serviceSelect.innerHTML = '<option value="">Select service</option>' + services.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join('');
+      serviceSelect.disabled = false;
     }
   }
 
   async function renderSlots() {
     const date = dateInput?.value || '';
-    if (!date && slotSelect) {
-      slotSelect.innerHTML = '<option value="">Select date first</option>';
+    if (!date && slotGrid) {
+      slotGrid.innerHTML = '<p class="col-span-full text-center text-brand-textDim/60 py-4">Select a date to see available time slots</p>';
+      slotInput.value = '';
+      updateBookBtnState();
       return;
     }
+    renderSlotSkeletons();
     const slots = await loadSlots(date);
-    if (slotSelect) {
+    if (slotGrid) {
+      if (!slots.length) {
+        slotGrid.innerHTML = `
+          <div class="col-span-full text-center py-8" role="status">
+            <svg class="mx-auto mb-3 text-brand-muted/40 h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p class="text-brand-textDim">No slots available for this date</p>
+            <p class="text-xs text-brand-textDim/60 mt-1">Please select another date</p>
+          </div>
+        `;
+        slotInput.value = '';
+        selectedSlot = null;
+        updateBookBtnState();
+        return;
+      }
       const morning = slots.filter(s => parseInt(s.time.split(':')[0]) < 12);
       const afternoon = slots.filter(s => parseInt(s.time.split(':')[0]) >= 12);
-      let html = '<option value="">Select time</option>';
+      let html = '';
       if (morning.length) {
-        html += '<optgroup label="Morning">' + morning.map(s => `<option value="${s.time}">${s.label}</option>`).join('') + '</optgroup>';
+        html += '<div class="slot-group-label" aria-hidden="true">Morning</div>' + morning.map((s, i) => `
+          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" style="animation-delay: ${i * 50}ms">
+            <span class="slot-time">${escapeHtml(s.label)}</span>
+          </button>
+        `).join('');
       }
       if (afternoon.length) {
-        html += '<optgroup label="Afternoon">' + afternoon.map(s => `<option value="${s.time}">${s.label}</option>`).join('') + '</optgroup>';
+        html += '<div class="slot-group-label" aria-hidden="true">Afternoon</div>' + afternoon.map((s, i) => `
+          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" style="animation-delay: ${(morning.length + i) * 50}ms">
+            <span class="slot-time">${escapeHtml(s.label)}</span>
+          </button>
+        `).join('');
       }
-      slotSelect.innerHTML = html;
+      slotGrid.innerHTML = html;
+      attachSlotListeners();
     }
+  }
+
+  function attachSlotListeners() {
+    const slotBtns = slotGrid?.querySelectorAll('.time-slot-btn');
+    slotBtns?.forEach(btn => {
+      btn.addEventListener('click', () => selectSlot(btn));
+      btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectSlot(btn);
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          const allBtns = Array.from(slotBtns);
+          const idx = allBtns.indexOf(btn);
+          const nextIdx = e.key === 'ArrowRight' ? (idx + 1) % allBtns.length : (idx - 1 + allBtns.length) % allBtns.length;
+          allBtns[nextIdx].focus();
+        }
+      });
+    });
+  }
+
+  function selectSlot(btn) {
+    if (btn.classList.contains('booked')) return;
+    slotGrid?.querySelectorAll('.time-slot-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('selected');
+    btn.setAttribute('aria-selected', 'true');
+    selectedSlot = btn.dataset.time;
+    slotInput.value = selectedSlot;
+    announce(`${btn.dataset.label} selected`);
+    clearSlotError();
+    updateBookBtnState();
   }
 
   async function renderBookings() {
@@ -205,7 +357,18 @@ export function initBookingForm(formSelector, options = {}) {
     if (!bookingsTable) return;
 
     if (!rows.length) {
-      bookingsTable.innerHTML = '<div class="text-sm text-brand-muted/90 py-3">No appointments for this date.</div>';
+      bookingsTable.innerHTML = `
+        <div class="empty-state py-12 text-center" role="status">
+          <svg class="mx-auto mb-4 text-brand-muted/40 h-16 w-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <h4 class="font-semibold text-white mb-2">No appointments for this date</h4>
+          <p class="text-brand-textDim text-sm">Appointments for ${date ? new Date(date).toLocaleDateString() : 'selected date'} will appear here.</p>
+        </div>
+      `;
       return;
     }
 
@@ -226,10 +389,10 @@ export function initBookingForm(formSelector, options = {}) {
             ${rows.map(r => `
               <tr class="hover:bg-brand-panelAlt/60 transition-colors" data-id="${r.id}">
                 <td class="px-4 py-3"><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-brand-accent to-brand-accentDim text-bg">${r.time}</span></td>
-                <td class="px-4 py-3">${r.name}</td>
-                <td class="px-4 py-3">${r.phone}</td>
-                <td class="px-4 py-3">${r.serviceName || 'General'}</td>
-                <td class="px-4 py-3">${r.vehicleReg || '—'}</td>
+                <td class="px-4 py-3">${escapeHtml(r.name)}</td>
+                <td class="px-4 py-3">${escapeHtml(r.phone)}</td>
+                <td class="px-4 py-3">${escapeHtml(r.serviceName || 'General')}</td>
+                <td class="px-4 py-3">${escapeHtml(r.vehicleReg || '—')}</td>
                 <td class="px-4 py-3">
                   <button data-action="del" class="px-3 py-1.5 rounded-lg bg-gradient-to-b from-brand-accent to-brand-accentDim text-xs font-semibold text-bg hover:opacity-90 transition-opacity">Delete</button>
                 </td>
@@ -257,6 +420,8 @@ export function initBookingForm(formSelector, options = {}) {
   }
 
   dateInput?.addEventListener('change', () => {
+    selectedSlot = null;
+    slotInput.value = '';
     renderSlots();
     renderBookings();
   });
@@ -272,29 +437,35 @@ export function initBookingForm(formSelector, options = {}) {
     date: (v) => v !== '' || 'Select a date',
   };
 
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
   function validateField(input) {
     const name = input.name;
     const validator = validators[name];
     if (!validator) return true;
-    
+
     const error = validator(input.value);
-    const errorEl = input.parentNode.querySelector('.field-error');
-    
+    const errorEl = document.getElementById(`${name}-error`) || input.parentNode.querySelector('.field-error');
+
     if (error !== true) {
       input.classList.add('input-error');
       input.setAttribute('aria-invalid', 'true');
-      if (!errorEl) {
-        const err = document.createElement('div');
-        err.className = 'field-error';
-        err.setAttribute('role', 'alert');
-        input.parentNode.appendChild(err);
+      if (errorEl) {
+        errorEl.textContent = error;
+        errorEl.classList.add('visible');
       }
-      input.parentNode.querySelector('.field-error').textContent = error;
       return false;
     } else {
       input.classList.remove('input-error');
       input.removeAttribute('aria-invalid');
-      if (errorEl) errorEl.remove();
+      if (errorEl) {
+        errorEl.classList.remove('visible');
+        errorEl.textContent = '';
+      }
       return true;
     }
   }
@@ -305,7 +476,45 @@ export function initBookingForm(formSelector, options = {}) {
     inputs.forEach(input => {
       if (!validateField(input)) valid = false;
     });
+    // Also check slot selection
+    if (!selectedSlot) {
+      showSlotError('Select a time slot');
+      valid = false;
+    } else {
+      clearSlotError();
+    }
     return valid;
+  }
+
+  function showSlotError(message) {
+    const errorEl = document.getElementById('slot-error');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('visible');
+    }
+    slotGrid?.setAttribute('aria-invalid', 'true');
+  }
+
+  function clearSlotError() {
+    const errorEl = document.getElementById('slot-error');
+    if (errorEl) {
+      errorEl.classList.remove('visible');
+      errorEl.textContent = '';
+    }
+    slotGrid?.removeAttribute('aria-invalid');
+  }
+
+  function updateBookBtnState() {
+    const requiredInputs = form.querySelectorAll('input[required], select[required]');
+    let allFilled = true;
+    requiredInputs.forEach(input => {
+      if (!input.value.trim()) allFilled = false;
+    });
+    if (!selectedSlot) allFilled = false;
+    
+    if (bookBtn) {
+      bookBtn.disabled = !allFilled;
+    }
   }
 
   // Attach validation listeners
@@ -313,6 +522,7 @@ export function initBookingForm(formSelector, options = {}) {
     input.addEventListener('blur', () => validateField(input));
     input.addEventListener('input', () => {
       if (input.classList.contains('input-error')) validateField(input);
+      updateBookBtnState();
     });
   });
 
@@ -321,34 +531,43 @@ export function initBookingForm(formSelector, options = {}) {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     data.date = dateInput?.value || '';
-    data.slot_time = slotSelect?.value || '';
+    data.slot_time = selectedSlot || slotInput?.value || '';
 
     if (!validateForm()) {
       showToast('Please fix the errors above', 'error');
       return;
     }
 
+    // Show loading state
     bookBtn.disabled = true;
-    bookBtn.textContent = 'Booking...';
+    if (btnText) btnText.classList.add('hidden');
+    if (btnLoading) btnLoading.classList.remove('hidden');
 
     try {
       await submitBooking(data);
       showConfirmationModal(data);
       form.reset();
+      selectedSlot = null;
+      slotInput.value = '';
+      slotGrid?.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
       await renderSlots();
       await renderBookings();
     } catch (err) {
       showToast('Booking failed: ' + err.message, 'error');
     } finally {
       bookBtn.disabled = false;
-      bookBtn.textContent = 'Confirm booking';
+      if (btnText) btnText.classList.remove('hidden');
+      if (btnLoading) btnLoading.classList.add('hidden');
+      updateBookBtnState();
     }
   });
 
   renderServices();
-  renderSlots();
   const today = new Date().toISOString().split('T')[0];
-  if (dateInput) dateInput.value = today;
+  if (dateInput) {
+    dateInput.min = today;
+    dateInput.value = today;
+  }
   renderSlots();
   renderBookings();
 }
