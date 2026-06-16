@@ -1,6 +1,123 @@
 // Booking Module - API Integration
 const API = '/api';
 
+// Simple toast notification system
+function showToast(message, type = 'success', duration = 4000) {
+  const container = document.getElementById('toast-container') || createToastContainer();
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.setAttribute('role', 'alert');
+  toast.setAttribute('aria-live', 'polite');
+  toast.innerHTML = `
+    <div class="toast-content">
+      <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        ${type === 'success' ? '<path d="M20 6 9 17l-5-5"/>' : type === 'error' ? '<circle cx="12" cy="12" r="10"/><path d="M15 9 9 15M9 9l6 6"/>' : '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>'}
+      </svg>
+      <span>${message}</span>
+    </div>
+    <button class="toast-close" aria-label="Dismiss">&times;</button>
+  `;
+  
+  const closeBtn = toast.querySelector('.toast-close');
+  closeBtn.addEventListener('click', () => removeToast(toast));
+  
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  
+  setTimeout(() => removeToast(toast), duration);
+  
+  return toast;
+}
+
+function createToastContainer() {
+  const container = document.createElement('div');
+  container.id = 'toast-container';
+  container.className = 'toast-container';
+  document.body.appendChild(container);
+  return container;
+}
+
+function removeToast(toast) {
+  toast.classList.remove('show');
+  toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+}
+
+// Confirmation modal
+function showConfirmationModal(bookingData) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.setAttribute('aria-labelledby', 'modal-title');
+  
+  const serviceName = bookingData.serviceId ? 
+    ({basic: 'Basic Wash', interior: 'Interior Revival', ceramic: 'Ceramic Pro Package', full: 'Full Detail'}[bookingData.serviceId] || 'General') 
+    : 'General';
+  
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <svg class="modal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        <h3 id="modal-title">Booking Confirmed</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message">We'll contact you via WhatsApp within 2 hours to confirm.</p>
+        <dl class="modal-details">
+          <div><dt>Date</dt><dd>${bookingData.date}</dd></div>
+          <div><dt>Time</dt><dd>${bookingData.slot_time}</dd></div>
+          <div><dt>Service</dt><dd>${serviceName}</dd></div>
+          <div><dt>Name</dt><dd>${bookingData.name}</dd></div>
+          <div><dt>Phone</dt><dd>${bookingData.phone}</dd></div>
+          ${bookingData.email ? `<div><dt>Email</dt><dd>${bookingData.email}</dd></div>` : ''}
+          ${bookingData.vehicleReg ? `<div><dt>Vehicle</dt><dd>${bookingData.vehicleReg}</dd></div>` : ''}
+          ${bookingData.notes ? `<div><dt>Notes</dt><dd>${bookingData.notes}</dd></div>` : ''}
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary modal-close">Got it</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.classList.add('show'));
+  
+  const closeBtn = modal.querySelector('.modal-close');
+  const closeModal = () => {
+    modal.classList.remove('show');
+    modal.addEventListener('transitionend', () => modal.remove(), { once: true });
+  };
+  
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  
+  // Trap focus
+  const focusableElements = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Tab') {
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    }
+  });
+  
+  firstElement?.focus();
+  
+  return modal;
+}
+
 async function request(path, options = {}) {
   const res = await fetch(API + path, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', ...options.headers },
@@ -69,7 +186,16 @@ export function initBookingForm(formSelector, options = {}) {
     }
     const slots = await loadSlots(date);
     if (slotSelect) {
-      slotSelect.innerHTML = '<option value="">Select time</option>' + slots.map(s => `<option value="${s.time}">${s.label}</option>`).join('');
+      const morning = slots.filter(s => parseInt(s.time.split(':')[0]) < 12);
+      const afternoon = slots.filter(s => parseInt(s.time.split(':')[0]) >= 12);
+      let html = '<option value="">Select time</option>';
+      if (morning.length) {
+        html += '<optgroup label="Morning">' + morning.map(s => `<option value="${s.time}">${s.label}</option>`).join('') + '</optgroup>';
+      }
+      if (afternoon.length) {
+        html += '<optgroup label="Afternoon">' + afternoon.map(s => `<option value="${s.time}">${s.label}</option>`).join('') + '</optgroup>';
+      }
+      slotSelect.innerHTML = html;
     }
   }
 
@@ -121,8 +247,11 @@ export function initBookingForm(formSelector, options = {}) {
         if (!id) return;
         try {
           await deleteBooking(id);
+          showToast('Appointment deleted', 'success');
           await renderBookings();
-        } catch { console.warn('Delete failed'); }
+        } catch {
+          showToast('Failed to delete appointment', 'error');
+        }
       });
     });
   }
@@ -132,6 +261,61 @@ export function initBookingForm(formSelector, options = {}) {
     renderBookings();
   });
 
+  // Inline validation
+  const validators = {
+    name: (v) => v.trim().length >= 2 || 'Name must be at least 2 characters',
+    phone: (v) => /^\+?[\d\s-]{10,}$/.test(v.trim()) || 'Enter a valid phone number',
+    email: (v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'Enter a valid email',
+    vehicleReg: (v) => !v || /^[A-Z]{1,3}\s?\d{1,4}$/i.test(v.trim().toUpperCase()) || 'Enter valid registration (e.g., ABC 1234)',
+    serviceId: (v) => v !== '' || 'Select a service',
+    slot_time: (v) => v !== '' || 'Select a time slot',
+    date: (v) => v !== '' || 'Select a date',
+  };
+
+  function validateField(input) {
+    const name = input.name;
+    const validator = validators[name];
+    if (!validator) return true;
+    
+    const error = validator(input.value);
+    const errorEl = input.parentNode.querySelector('.field-error');
+    
+    if (error !== true) {
+      input.classList.add('input-error');
+      input.setAttribute('aria-invalid', 'true');
+      if (!errorEl) {
+        const err = document.createElement('div');
+        err.className = 'field-error';
+        err.setAttribute('role', 'alert');
+        input.parentNode.appendChild(err);
+      }
+      input.parentNode.querySelector('.field-error').textContent = error;
+      return false;
+    } else {
+      input.classList.remove('input-error');
+      input.removeAttribute('aria-invalid');
+      if (errorEl) errorEl.remove();
+      return true;
+    }
+  }
+
+  function validateForm() {
+    const inputs = form.querySelectorAll('input[required], select[required]');
+    let valid = true;
+    inputs.forEach(input => {
+      if (!validateField(input)) valid = false;
+    });
+    return valid;
+  }
+
+  // Attach validation listeners
+  form.querySelectorAll('input, select, textarea').forEach(input => {
+    input.addEventListener('blur', () => validateField(input));
+    input.addEventListener('input', () => {
+      if (input.classList.contains('input-error')) validateField(input);
+    });
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(form);
@@ -139,8 +323,8 @@ export function initBookingForm(formSelector, options = {}) {
     data.date = dateInput?.value || '';
     data.slot_time = slotSelect?.value || '';
 
-    if (!data.date || !data.slot_time || !data.name || !data.phone || !data.serviceId) {
-      alert('Please fill all required fields');
+    if (!validateForm()) {
+      showToast('Please fix the errors above', 'error');
       return;
     }
 
@@ -149,12 +333,12 @@ export function initBookingForm(formSelector, options = {}) {
 
     try {
       await submitBooking(data);
-      alert('Booking confirmed!');
+      showConfirmationModal(data);
       form.reset();
       await renderSlots();
       await renderBookings();
     } catch (err) {
-      alert('Booking failed: ' + err.message);
+      showToast('Booking failed: ' + err.message, 'error');
     } finally {
       bookBtn.disabled = false;
       bookBtn.textContent = 'Confirm booking';
