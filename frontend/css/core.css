@@ -364,6 +364,10 @@ a:focus-visible,
   margin-top: 0.5rem;
 }
 
+.slot-group {
+  display: contents;
+}
+
 .time-slot-btn {
   display: flex;
   align-items: center;

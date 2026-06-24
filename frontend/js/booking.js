@@ -280,7 +280,7 @@ export function initBookingForm(formSelector, options = {}) {
     if (slotGrid) {
       if (!slots.length) {
         slotGrid.innerHTML = `
-          <div class="col-span-full text-center py-8" role="status">
+          <div class="col-span-full text-center py-8" role="status" aria-live="polite">
             <svg class="mx-auto mb-3 text-brand-muted/40 h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
@@ -312,19 +312,27 @@ export function initBookingForm(formSelector, options = {}) {
       const morning = slots.filter(s => parseInt(s.time.split(':')[0]) < 12);
       const afternoon = slots.filter(s => parseInt(s.time.split(':')[0]) >= 12);
       let html = '';
+      let slotIndex = 0;
       if (morning.length) {
-        html += '<div class="slot-group-label" aria-hidden="true">Morning</div>' + morning.map((s, i) => `
-          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" style="animation-delay: ${i * 50}ms">
+        html += '<div class="slot-group-label" role="heading" aria-level="3" aria-label="Morning slots">Morning</div>';
+        html += '<div class="slot-group" role="group" aria-label="Morning time slots">';
+        html += morning.map((s, i) => `
+          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" aria-posinset="${i + 1}" aria-setsize="${morning.length}" style="animation-delay: ${slotIndex * 50}ms">
             <span class="slot-time">${escapeHtml(s.label)}</span>
           </button>
         `).join('');
+        html += '</div>';
+        slotIndex += morning.length;
       }
       if (afternoon.length) {
-        html += '<div class="slot-group-label" aria-hidden="true">Afternoon</div>' + afternoon.map((s, i) => `
-          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" style="animation-delay: ${(morning.length + i) * 50}ms">
+        html += '<div class="slot-group-label" role="heading" aria-level="3" aria-label="Afternoon slots">Afternoon</div>';
+        html += '<div class="slot-group" role="group" aria-label="Afternoon time slots">';
+        html += afternoon.map((s, i) => `
+          <button type="button" class="time-slot-btn" data-time="${escapeHtml(s.time)}" data-label="${escapeHtml(s.label)}" role="option" aria-selected="false" tabindex="0" aria-posinset="${i + 1}" aria-setsize="${afternoon.length}" style="animation-delay: ${slotIndex * 50}ms">
             <span class="slot-time">${escapeHtml(s.label)}</span>
           </button>
         `).join('');
+        html += '</div>';
       }
       slotGrid.innerHTML = html;
       attachSlotListeners();
@@ -372,15 +380,15 @@ export function initBookingForm(formSelector, options = {}) {
 
     if (!rows.length) {
       bookingsTable.innerHTML = `
-        <div class="empty-state py-12 text-center" role="status">
+        <div class="empty-state py-12 text-center" role="status" aria-live="polite">
           <svg class="mx-auto mb-4 text-brand-muted/40 h-16 w-16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
             <line x1="16" y1="2" x2="16" y2="6"/>
             <line x1="8" y1="2" x2="8" y2="6"/>
             <line x1="3" y1="10" x2="21" y2="10"/>
           </svg>
-          <h4 class="font-semibold text-white mb-2">No appointments for this date</h4>
-          <p class="text-brand-textDim text-sm mb-6">Appointments for ${date ? new Date(date).toLocaleDateString() : 'selected date'} will appear here.</p>
+          <h4 class="empty-state-title font-semibold text-white mb-2">No appointments for this date</h4>
+          <p class="empty-state-message text-brand-textDim text-sm mb-6">Appointments for ${date ? new Date(date).toLocaleDateString() : 'selected date'} will appear here.</p>
           <button type="button" class="btn-secondary px-6 py-2.5 rounded-xl text-sm font-medium" id="empty-state-refresh" aria-label="Refresh appointments">
             <svg class="inline w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M23 4v6h-6"/>

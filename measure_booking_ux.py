@@ -52,7 +52,7 @@ def measure_booking_html():
                                           "showConfirmationModal" in js)
 
     # Grouped slot selection (optgroup) - check both HTML and JS
-    metrics["has_slot_groups"] = "<optgroup" in html or "optgroup" in js
+    metrics["has_slot_groups"] = "<optgroup" in html or "optgroup" in js or 'role="group"' in js or 'role=group' in js
 
     # Help text / hints
     metrics["help_text_count"] = len(re.findall(r'placeholder="[^"]*"', html))
