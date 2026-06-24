@@ -6,20 +6,40 @@
     <title>MagShine Appointments</title>
     <meta name="description" content="Book appointments with MagShine">
     <meta name="theme-color" content="#4a86e8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
-        :root {
-            --primary: #4a86e8;
-            --primary-dark: #3a76d8;
-            --secondary: #f5f5f5;
-            --success: #4caf50;
-            --danger: #f44336;
-            --light-gray: #e0e0e0;
-            --dark-gray: #666;
-            --white: #ffffff;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+    :root {
+        --primary: #4a86e8;
+        --primary-dark: #3a76d8;
+        --primary-light: #e8f0fe;
+        --secondary: #f5f5f5;
+        --success: #4caf50;
+        --success-light: #e8f5e9;
+        --danger: #f44336;
+        --danger-light: #ffebee;
+        --warning: #ff9800;
+        --warning-light: #fff3e0;
+        --light-gray: #e0e0e0;
+        --mid-gray: #bdbdbd;
+        --dark-gray: #666;
+        --text-primary: #1a1a2e;
+        --text-secondary: #4a4a5a;
+        --text-muted: #888;
+        --white: #ffffff;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+        --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+        --radius-sm: 6px;
+        --radius: 10px;
+        --radius-lg: 16px;
+        --transition-fast: 150ms ease;
+        --transition: 250ms ease;
+        --transition-slow: 350ms ease;
+    }
         
         * {
             margin: 0;
@@ -27,229 +47,860 @@
             box-sizing: border-box;
         }
         
+        html {
+            font-size: 16px;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
-            padding: 20px;
+            color: var(--text-primary);
+            background-color: #f7f8fc;
+            min-height: 100vh;
+            padding: 24px;
             max-width: 800px;
             margin: 0 auto;
         }
         
         header {
             text-align: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
+            padding: 32px 0 24px;
+            margin-bottom: 8px;
         }
-        
+
         h1 {
             color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 2rem;
+            margin-bottom: 8px;
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
-        
+
         .subtitle {
-            color: var(--dark-gray);
+            color: var(--text-muted);
             font-size: 1.1rem;
+            font-weight: 400;
         }
-        
+
         .container {
             background: var(--white);
-            border-radius: 10px;
-            padding: 25px;
+            border-radius: var(--radius-lg);
+            padding: 32px;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
         
         .view {
             display: none;
+            animation: fadeIn var(--transition) ease;
         }
-        
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .view.active {
             display: block;
         }
-        
+
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
+            padding: 14px 24px;
+            border-radius: var(--radius);
             cursor: pointer;
             font-size: 1rem;
+            font-weight: 500;
             text-align: center;
             text-decoration: none;
-            transition: background 0.3s;
-            margin: 5px 0;
+            transition: all var(--transition-fast);
+            margin: 4px 0;
         }
-        
+
         .btn:hover {
             background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
         }
-        
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .btn:disabled {
+            background: var(--mid-gray);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .btn-block {
-            display: block;
+            display: flex;
             width: 100%;
         }
-        
+
         .btn-back {
-            background: var(--light-gray);
-            color: #333;
+            background: var(--secondary);
+            color: var(--text-secondary);
         }
-        
+
         .btn-back:hover {
-            background: #d0d0d0;
+            background: var(--mid-gray);
+            color: var(--text-primary);
         }
-        
+
         .btn-success {
             background: var(--success);
         }
-        
+
         .btn-success:hover {
             background: #3d8b40;
         }
-        
+
         .btn-danger {
             background: var(--danger);
         }
-        
+
         .btn-danger:hover {
             background: #d32f2f;
         }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--secondary);
+            color: var(--text-primary);
+        }
         
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
-        
-        label {
+
+        .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
         }
-        
-        input, select, textarea {
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px 16px;
             border: 1px solid var(--light-gray);
-            border-radius: 5px;
+            border-radius: var(--radius);
             font-size: 1rem;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: var(--white);
+            transition: all var(--transition-fast);
         }
-        
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input.error,
+        .form-group select.error,
+        .form-group textarea.error {
+            border-color: var(--danger);
+        }
+
+        .form-group input.error:focus,
+        .form-group select.error:focus,
+        .form-group textarea.error:focus {
+            box-shadow: 0 0 0 3px var(--danger-light);
+        }
+
+        .form-error {
+            display: none;
+            color: var(--danger);
+            font-size: 0.8125rem;
+            margin-top: 6px;
+        }
+
+        .form-error.visible {
+            display: block;
+            animation: slideDown var(--transition-fast) ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .time-slots {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 10px;
             margin: 15px 0;
         }
-        
+
         .time-slot {
-            padding: 10px;
+            padding: 14px 10px;
             text-align: center;
-            border: 1px solid var(--light-gray);
-            border-radius: 5px;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            user-select: none;
         }
-        
+
+        .time-slot:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
         .time-slot.available {
-            background: #e8f5e9;
+            background: var(--success-light);
             color: var(--success);
             border-color: var(--success);
         }
-        
+
         .time-slot.available:hover {
             background: #c8e6c9;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
         }
-        
+
+        .time-slot.available:active {
+            transform: translateY(0);
+        }
+
         .time-slot.booked {
-            background: #ffebee;
+            background: var(--danger-light);
             color: var(--danger);
             border-color: var(--danger);
             cursor: not-allowed;
+            opacity: 0.7;
         }
-        
+
         .time-slot.selected {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .time-slot.selected:focus-visible {
+            outline-color: var(--primary);
         }
         
         .appointment-list {
             max-height: 400px;
             overflow-y: auto;
         }
-        
+
         .appointment-item {
-            padding: 15px;
+            padding: 20px;
             border-bottom: 1px solid var(--light-gray);
+            background: var(--white);
+            transition: background var(--transition-fast);
         }
-        
+
         .appointment-item:last-child {
             border-bottom: none;
         }
-        
-        .status {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
+
+        .appointment-item:hover {
+            background: #fafafa;
         }
-        
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            gap: 12px;
+        }
+
+        .appointment-header h4 {
+            font-size: 1.0625rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         .status-confirmed {
-            background: #e8f5e9;
+            background: var(--success-light);
             color: var(--success);
         }
-        
+
         .status-cancelled {
-            background: #ffebee;
+            background: var(--danger-light);
             color: var(--danger);
         }
-        
+
+        .appointment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: var(--secondary);
+            border-radius: var(--radius);
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-label {
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .install-prompt {
             position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
+            bottom: 24px;
+            left: 24px;
+            right: 24px;
+            max-width: 752px;
             background: white;
             border: 1px solid var(--light-gray);
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: var(--radius-lg);
+            padding: 20px;
             text-align: center;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-lg);
             display: none;
+            z-index: 100;
+            animation: slideUp var(--transition) ease;
         }
-        
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .close-prompt {
-            float: right;
+            position: absolute;
+            top: 12px;
+            right: 12px;
             background: none;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--dark-gray);
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
         }
-        
+
+        .close-prompt:hover {
+            background: var(--secondary);
+            color: var(--text-primary);
+        }
+
         .hidden {
             display: none;
         }
-        
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--primary);
+            min-width: 280px;
+            max-width: 400px;
+            pointer-events: auto;
+            animation: toastIn var(--transition) ease;
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast.warning {
+            border-left-color: var(--warning);
+        }
+
+        .toast.info {
+            border-left-color: var(--primary);
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .toast.hide {
+            animation: toastOut var(--transition) ease forwards;
+        }
+
+        @keyframes toastOut {
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
+        .toast-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 0.9375rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            flex-shrink: 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .toast-close:hover {
+            background: var(--secondary);
+            color: var(--text-primary);
+        }
+
+        /* Calendar button in modal */
+        .modal-calendar-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-fast);
+            margin-top: 8px;
+        }
+
+        .modal-calendar-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .modal-calendar-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Staggered animation for time slots */
+        .time-slot {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slotFadeIn var(--transition) ease forwards;
+        }
+
+        .time-slot:nth-child(1) { animation-delay: 50ms; }
+        .time-slot:nth-child(2) { animation-delay: 100ms; }
+        .time-slot:nth-child(3) { animation-delay: 150ms; }
+        .time-slot:nth-child(4) { animation-delay: 200ms; }
+        .time-slot:nth-child(5) { animation-delay: 250ms; }
+        .time-slot:nth-child(6) { animation-delay: 300ms; }
+        .time-slot:nth-child(7) { animation-delay: 350ms; }
+        .time-slot:nth-child(8) { animation-delay: 400ms; }
+        .time-slot:nth-child(9) { animation-delay: 450ms; }
+        .time-slot:nth-child(10) { animation-delay: 500ms; }
+
+        @keyframes slotFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* No slots available state */
+        .no-slots-message {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-muted);
+        }
+
+        .no-slots-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            color: var(--mid-gray);
+        }
+
+        .no-slots-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .no-slots-hint {
+            font-size: 0.875rem;
+        }
+
+        /* Copy button for appointment details */
+        .copy-btn {
+            background: var(--secondary);
+            color: var(--text-secondary);
+            border: none;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all var(--transition-fast);
+        }
+
+        .copy-btn:hover {
+            background: var(--mid-gray);
+            color: var(--text-primary);
+        }
+
+        .copy-btn.copied {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .copy-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Live region for announcements */
+        #announcer {
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition);
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.95) translateY(20px);
+            transition: all var(--transition);
+        }
+
+        .modal-overlay.visible .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .modal-icon.success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .modal-icon.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .modal-icon.error {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-message {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .modal-details {
+            background: var(--secondary);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .modal-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .modal-detail-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .modal-detail-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-fast);
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--light-gray);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            color: var(--mid-gray);
+        }
+
+        .empty-state-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-message {
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        /* Section header */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
         @media (max-width: 600px) {
             body {
-                padding: 10px;
+                padding: 16px;
             }
             
             .container {
-                padding: 15px;
+                padding: 20px;
             }
             
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
-            
+
             .time-slots {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+
+            .appointment-details {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .install-prompt {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .toast-container {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+            }
+
+            .toast {
+                min-width: auto;
+                max-width: none;
+            }
+
+            .modal {
+                padding: 24px;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                width: 100%;
             }
         }
     </style>
@@ -273,37 +924,42 @@
         <!-- Customer Booking View -->
         <div id="customer-view" class="view">
             <h2>Book an Appointment</h2>
-            <p>Select a date and available time slot for your appointment</p>
-            
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Select a date and available time slot for your appointment</p>
+
             <div class="form-group">
-                <label for="booking-date">Select Date:</label>
+                <label for="booking-date">Select Date</label>
                 <input type="date" id="booking-date" min="">
+                <span class="form-error" id="date-error">Please select a valid date</span>
             </div>
-            
+
             <div class="form-group">
-                <label>Available Time Slots (1-hour intervals):</label>
-                <div id="time-slots-container" class="time-slots">
+                <label>Available Time Slots (1-hour intervals)</label>
+                <div id="time-slots-container" class="time-slots" role="listbox" aria-label="Available time slots">
                     <!-- Time slots will be dynamically inserted here -->
                 </div>
+                <span class="form-error" id="time-error">Please select a time slot</span>
             </div>
-            
+
             <div class="form-group">
-                <label for="customer-name">Your Name:</label>
+                <label for="customer-name">Your Name</label>
                 <input type="text" id="customer-name" placeholder="Enter your full name">
+                <span class="form-error" id="name-error">Please enter your name</span>
             </div>
-            
+
             <div class="form-group">
-                <label for="customer-email">Email:</label>
+                <label for="customer-email">Email</label>
                 <input type="email" id="customer-email" placeholder="Enter your email">
+                <span class="form-error" id="email-error">Please enter a valid email</span>
             </div>
-            
+
             <div class="form-group">
-                <label for="customer-phone">Phone:</label>
+                <label for="customer-phone">Phone</label>
                 <input type="tel" id="customer-phone" placeholder="Enter your phone number">
+                <span class="form-error" id="phone-error">Please enter your phone number</span>
             </div>
-            
+
             <div class="form-group">
-                <label for="service-type">Service Type:</label>
+                <label for="service-type">Service Type</label>
                 <select id="service-type">
                     <option value="">Select a service</option>
                     <option value="consultation">Consultation</option>
@@ -312,13 +968,14 @@
                     <option value="maintenance">Maintenance</option>
                     <option value="other">Other</option>
                 </select>
+                <span class="form-error" id="service-error">Please select a service type</span>
             </div>
-            
+
             <div class="form-group">
-                <label for="special-notes">Special Notes:</label>
+                <label for="special-notes">Special Notes (Optional)</label>
                 <textarea id="special-notes" rows="3" placeholder="Any special requests or notes"></textarea>
             </div>
-            
+
             <button id="confirm-booking" class="btn btn-success btn-block" disabled>Confirm Appointment</button>
             <button id="back-to-access" class="btn btn-block btn-back">Back</button>
         </div>
@@ -339,256 +996,690 @@
         
         <!-- Owner Dashboard View -->
         <div id="owner-dashboard-view" class="view">
-            <h2>Owner Dashboard</h2>
-            <p>Manage all appointments and business details</p>
-            
-            <h3>All Appointments</h3>
+            <div class="section-header">
+                <h2>Owner Dashboard</h2>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Manage all appointments and business details</p>
+
+            <div class="section-header">
+                <h3>All Appointments</h3>
+            </div>
             <div id="appointments-container" class="appointment-list">
                 <!-- Appointments will be dynamically inserted here -->
             </div>
-            
-            <button id="sync-calendar" class="btn btn-block">Sync with Google Calendar</button>
-            <button id="logout-owner" class="btn btn-block btn-danger">Logout</button>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px;">
+                <button id="sync-calendar" class="btn btn-block">Sync with Google Calendar</button>
+                <button id="logout-owner" class="btn btn-block btn-danger">Logout</button>
+            </div>
         </div>
     </div>
-    
+
     <div id="install-prompt" class="install-prompt">
         <button class="close-prompt" id="close-prompt">&times;</button>
         <p>Add MagShine Appointments to your home screen for quick access!</p>
         <button id="install-btn" class="btn">Install App</button>
     </div>
-    
-    <footer style="text-align: center; margin-top: 20px; color: var(--dark-gray);">
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Modal overlay -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal">
+            <div id="modal-icon" class="modal-icon success" aria-hidden="true"></div>
+            <h2 id="modal-title" class="modal-title"></h2>
+            <p id="modal-message" class="modal-message"></p>
+            <div id="modal-details" class="modal-details" hidden></div>
+            <div class="modal-actions">
+                <button id="modal-confirm" class="btn btn-success">Confirm</button>
+                <button id="modal-cancel" class="btn btn-back">Cancel</button>
+                <button id="modal-calendar" class="modal-calendar-btn" hidden>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    Add to Calendar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="loading-overlay" aria-hidden="true">
+        <div class="spinner" aria-label="Loading"></div>
+    </div>
+
+    <!-- Live region for screen reader announcements -->
+    <div id="announcer" aria-live="polite" aria-atomic="true"></div>
+
+    <footer style="text-align: center; margin-top: 20px; color: var(--text-muted);">
         <p>&copy; 2026 MagShine. All rights reserved.</p>
     </footer>
     
     <script>
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('booking-date').min = today;
-        document.getElementById('booking-date').value = today;
+        // ============================================
+        // Utility Functions
+        // ============================================
         
-        // Time slots (9 AM to 6 PM)
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+        
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+        
+        function formatTime(timeString) {
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours, 10);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+        
+        function debounce(fn, delay) {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => fn(...args), delay);
+            };
+        }
+
+        // ============================================
+        // Accessibility Helpers
+        // ============================================
+
+        const announcer = $('#announcer');
+
+        function announce(message) {
+            announcer.textContent = '';
+            setTimeout(() => {
+                announcer.textContent = message;
+            }, 100);
+        }
+
+        // ============================================
+        // Calendar (ICS) Generation
+        // ============================================
+
+        function generateICS({ title, description, startDate, startTime, endTime, location = '', organizerEmail = '' }) {
+            const [year, month, day] = startDate.split('-');
+            const [startHour, startMin] = startTime.split(':');
+            const [endHour, endMin] = endTime.split(':') || [`${parseInt(startHour) + 1}`, startMin];
+
+            const dtStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            const dtStart = `${year}${month}${day}T${startHour}${startMin}00`;
+            const dtEnd = `${year}${month}${day}T${endHour}${endMin}00`;
+            const uid = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}@magshine.appointments`;
+
+            return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//MagShine//Appointments//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${dtStamp}
+DTSTART:${dtStart}
+DTEND:${dtEnd}
+SUMMARY:${title}
+DESCRIPTION:${description}
+${location ? `LOCATION:${location}` : ''}
+${organizerEmail ? `ORGANIZER;CN=MagShine:MAILTO:${organizerEmail}` : ''}
+STATUS:CONFIRMED
+SEQUENCE:0
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR`;
+        }
+
+        function downloadICS(icsContent, filename = 'appointment.ics') {
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // ============================================
+        // Toast Notification System
+        // ============================================
+        
+        const toastContainer = $('#toast-container');
+        
+        function showToast(message, type = 'info', duration = 4000) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'polite');
+            
+            const icons = {
+                success: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+                error: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+                warning: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+                info: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+            };
+            
+            toast.innerHTML = `
+                ${icons[type] || icons.info}
+                <span class="toast-message">${message}</span>
+                <button class="toast-close" aria-label="Dismiss">&times;</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => hideToast(toast));
+            
+            if (duration > 0) {
+                setTimeout(() => hideToast(toast), duration);
+            }
+            
+            return toast;
+        }
+        
+        function hideToast(toast) {
+            toast.classList.add('hide');
+            toast.addEventListener('animationend', () => toast.remove());
+        }
+        
+        // ============================================
+        // Modal System
+        // ============================================
+        
+        const modalOverlay = $('#modal-overlay');
+        const modalIcon = $('#modal-icon');
+        const modalTitle = $('#modal-title');
+        const modalMessage = $('#modal-message');
+        const modalDetails = $('#modal-details');
+        const modalConfirm = $('#modal-confirm');
+        const modalCancel = $('#modal-cancel');
+        const modalCalendar = $('#modal-calendar');
+
+        let modalResolve = null;
+        let currentICSContent = null;
+
+        function showModal({ title, message, details = null, icon = 'success', confirmText = 'Confirm', cancelText = 'Cancel', onConfirm, onCancel, icsData = null }) {
+            return new Promise((resolve) => {
+                modalResolve = resolve;
+                currentICSContent = null;
+
+                modalTitle.textContent = title;
+                modalMessage.textContent = message;
+                modalIcon.className = `modal-icon ${icon}`;
+                modalConfirm.textContent = confirmText;
+                modalCancel.textContent = cancelText;
+
+                if (details) {
+                    modalDetails.hidden = false;
+                    modalDetails.innerHTML = Object.entries(details).map(([label, value]) => `
+                        <div class="modal-detail-row">
+                            <span class="modal-detail-label">${label}</span>
+                            <span class="modal-detail-value">${value}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    modalDetails.hidden = true;
+                    modalDetails.innerHTML = '';
+                }
+
+                // Handle calendar button
+                if (icsData) {
+                    const { title: icsTitle, description, startDate, startTime, endTime, organizerEmail } = icsData;
+                    currentICSContent = generateICS({
+                        title: icsTitle,
+                        description,
+                        startDate,
+                        startTime,
+                        endTime,
+                        organizerEmail
+                    });
+                    modalCalendar.hidden = false;
+                } else {
+                    modalCalendar.hidden = true;
+                }
+
+                modalOverlay.classList.add('visible');
+                modalConfirm.focus();
+            });
+        }
+
+        function hideModal() {
+            modalOverlay.classList.remove('visible');
+            currentICSContent = null;
+            if (modalResolve) {
+                modalResolve(false);
+                modalResolve = null;
+            }
+        }
+
+        modalConfirm.addEventListener('click', () => {
+            modalOverlay.classList.remove('visible');
+            if (modalResolve) {
+                modalResolve(true);
+                modalResolve = null;
+            }
+        });
+
+        modalCancel.addEventListener('click', hideModal);
+
+        modalCalendar.addEventListener('click', () => {
+            if (currentICSContent) {
+                downloadICS(currentICSContent, `magshine-appointment-${Date.now()}.ics`);
+                showToast('Calendar event downloaded!', 'success');
+                announce('Calendar event downloaded');
+            }
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) hideModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('visible')) {
+                hideModal();
+            }
+        });
+        
+        // ============================================
+        // Loading Overlay
+        // ============================================
+        
+        const loadingOverlay = $('#loading-overlay');
+        
+        function showLoading() {
+            loadingOverlay.classList.add('visible');
+        }
+        
+        function hideLoading() {
+            loadingOverlay.classList.remove('visible');
+        }
+        
+        // ============================================
+        // State & Configuration
+        // ============================================
+        
         const timeSlots = [
             '09:00', '10:00', '11:00', '12:00',
             '13:00', '14:00', '15:00', '16:00',
             '17:00', '18:00'
         ];
         
-        // Store appointments in localStorage
         let appointments = JSON.parse(localStorage.getItem('magshine-appointments')) || [];
+        let selectedTimeSlot = null;
         
-        // PWA install prompt
+        // ============================================
+        // PWA Install Prompt
+        // ============================================
+        
         let deferredPrompt;
         
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            document.getElementById('install-prompt').style.display = 'block';
+            $('#install-prompt').style.display = 'block';
         });
         
-        document.getElementById('install-btn').addEventListener('click', () => {
+        $('#install-btn').addEventListener('click', () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        document.getElementById('install-prompt').style.display = 'none';
+                        $('#install-prompt').style.display = 'none';
+                        showToast('App installed successfully!', 'success');
                     }
                     deferredPrompt = null;
                 });
             }
         });
         
-        document.getElementById('close-prompt').addEventListener('click', () => {
-            document.getElementById('install-prompt').style.display = 'none';
+        $('#close-prompt').addEventListener('click', () => {
+            $('#install-prompt').style.display = 'none';
         });
         
-        // Navigation functions
+        // ============================================
+        // Navigation
+        // ============================================
+        
         function showView(viewId) {
-            document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('active');
-            });
-            document.getElementById(viewId).classList.add('active');
+            $$('.view').forEach(view => view.classList.remove('active'));
+            const view = $(`#${viewId}`);
+            if (view) view.classList.add('active');
+            
+            // Clear form errors when navigating away from customer view
+            if (viewId !== 'customer-view') {
+                clearFormErrors();
+            }
         }
         
-        // Event listeners for navigation
-        document.getElementById('customer-btn').addEventListener('click', () => {
+        $('#customer-btn').addEventListener('click', () => {
             showView('customer-view');
             loadTimeSlots();
         });
         
-        document.getElementById('owner-btn').addEventListener('click', () => {
+        $('#owner-btn').addEventListener('click', () => {
             showView('owner-access-view');
         });
         
-        document.getElementById('back-to-access').addEventListener('click', () => {
-            showView('access-view');
-        });
+        $('#back-to-access').addEventListener('click', () => showView('access-view'));
+        $('#back-to-access-owner').addEventListener('click', () => showView('access-view'));
         
-        document.getElementById('back-to-access-owner').addEventListener('click', () => {
-            showView('access-view');
-        });
+        // ============================================
+        // Form Validation
+        // ============================================
         
-        // Load time slots based on selected date
-        function loadTimeSlots() {
-            const selectedDate = document.getElementById('booking-date').value;
-            const slotsContainer = document.getElementById('time-slots-container');
+        const validators = {
+            'booking-date': (value) => value !== '',
+            'customer-name': (value) => value.trim().length >= 2,
+            'customer-email': (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()),
+            'customer-phone': (value) => value.trim().length >= 10,
+            'service-type': (value) => value !== ''
+        };
+        
+        function validateField(fieldId) {
+            const field = $(`#${fieldId}`);
+            const errorEl = $(`#${fieldId}-error`);
+            if (!field || !errorEl) return true;
             
-            slotsContainer.innerHTML = '';
+            const validator = validators[fieldId];
+            const isValid = validator ? validator(field.value) : true;
             
-            timeSlots.forEach(slot => {
-                const slotElement = document.createElement('div');
-                slotElement.className = 'time-slot';
-                slotElement.textContent = slot;
-                
-                // Check if this slot is already booked
-                const isBooked = appointments.some(appt => 
-                    appt.date === selectedDate && appt.time === slot && appt.status !== 'cancelled'
-                );
-                
-                if (isBooked) {
-                    slotElement.classList.add('booked');
-                    slotElement.title = 'Slot is already booked';
-                } else {
-                    slotElement.classList.add('available');
-                    slotElement.title = 'Click to select this slot';
-                    slotElement.addEventListener('click', () => {
-                        // Remove selected class from all slots
-                        document.querySelectorAll('.time-slot').forEach(el => {
-                            el.classList.remove('selected');
-                        });
-                        
-                        // Add selected class to clicked slot
-                        slotElement.classList.add('selected');
-                        
-                        // Enable booking button if form is complete
-                        checkBookingForm();
-                    });
-                }
-                
-                slotsContainer.appendChild(slotElement);
-            });
+            field.classList.toggle('error', !isValid);
+            errorEl.classList.toggle('visible', !isValid && field.value !== '');
+            
+            return isValid;
         }
         
-        // Check if booking form is complete
+        function clearFormErrors() {
+            $$('.form-group input, .form-group select, .form-group textarea').forEach(el => {
+                el.classList.remove('error');
+            });
+            $$('.form-error').forEach(el => el.classList.remove('visible'));
+        }
+        
+        function validateAllFields() {
+            const fields = Object.keys(validators);
+            return fields.every(validateField);
+        }
+        
         function checkBookingForm() {
-            const name = document.getElementById('customer-name').value.trim();
-            const email = document.getElementById('customer-email').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const service = document.getElementById('service-type').value;
-            const selectedSlot = document.querySelector('.time-slot.selected');
+            const name = $('#customer-name').value.trim();
+            const email = $('#customer-email').value.trim();
+            const phone = $('#customer-phone').value.trim();
+            const service = $('#service-type').value;
+            const hasTimeSlot = selectedTimeSlot !== null;
             
-            const bookingBtn = document.getElementById('confirm-booking');
-            
-            if (name && email && phone && service && selectedSlot) {
-                bookingBtn.disabled = false;
-            } else {
-                bookingBtn.disabled = true;
-            }
+            const isValid = name && email && phone && service && hasTimeSlot;
+            $('#confirm-booking').disabled = !isValid;
         }
         
-        // Event listener for date change
-        document.getElementById('booking-date').addEventListener('change', loadTimeSlots);
-        
-        // Form input event listeners
-        document.getElementById('customer-name').addEventListener('input', checkBookingForm);
-        document.getElementById('customer-email').addEventListener('input', checkBookingForm);
-        document.getElementById('customer-phone').addEventListener('input', checkBookingForm);
-        document.getElementById('service-type').addEventListener('change', checkBookingForm);
-        
-        // Confirm booking
-        document.getElementById('confirm-booking').addEventListener('click', () => {
-            const name = document.getElementById('customer-name').value.trim();
-            const email = document.getElementById('customer-email').value.trim();
-            const phone = document.getElementById('customer-phone').value.trim();
-            const service = document.getElementById('service-type').value;
-            const notes = document.getElementById('special-notes').value.trim();
-            const date = document.getElementById('booking-date').value;
-            const time = document.querySelector('.time-slot.selected').textContent;
-            
-            if (!name || !email || !phone || !service) {
-                alert('Please fill in all required fields.');
-                return;
+        // Real-time validation on input
+        Object.keys(validators).forEach(fieldId => {
+            const field = $(`#${fieldId}`);
+            if (field) {
+                field.addEventListener('input', debounce(() => {
+                    validateField(fieldId);
+                    checkBookingForm();
+                }, 150));
+                field.addEventListener('blur', () => validateField(fieldId));
             }
-            
-            // Create appointment object
-            const appointment = {
-                id: Date.now(), // Unique ID
-                name,
-                email,
-                phone,
-                service,
-                notes,
-                date,
-                time,
-                status: 'confirmed',
-                createdAt: new Date().toISOString()
-            };
-            
-            // Add to appointments array
-            appointments.push(appointment);
-            
-            // Save to localStorage
-            localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
-            
-            // Show success message
-            alert(`Appointment confirmed!\n\nDate: ${formatDate(date)}\nTime: ${time}\nService: ${service}\n\nWe've sent a confirmation to ${email}`);
-            
-            // Reset form
-            document.getElementById('customer-name').value = '';
-            document.getElementById('customer-email').value = '';
-            document.getElementById('customer-phone').value = '';
-            document.getElementById('service-type').value = '';
-            document.getElementById('special-notes').value = '';
-            
-            // Remove selected class from time slot
-            document.querySelectorAll('.time-slot').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            document.getElementById('confirm-booking').disabled = true;
-            
-            // Reload time slots to reflect the new booking
+        });
+        
+        $('#booking-date').addEventListener('change', () => {
+            validateField('booking-date');
             loadTimeSlots();
         });
         
-        // Owner login
-        document.getElementById('login-owner').addEventListener('click', () => {
-            const password = document.getElementById('owner-password').value;
-            
-            // Simple password check (in a real app, this would be more secure)
-            fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById('owner-password').value = '';
-                    showView('owner-dashboard-view');
-                    loadAppointments();
+        // ============================================
+        // Time Slot Management
+        // ============================================
+
+        function loadTimeSlots() {
+            const selectedDate = $('#booking-date').value;
+            const slotsContainer = $('#time-slots-container');
+
+            selectedTimeSlot = null;
+            slotsContainer.innerHTML = '';
+
+            let availableCount = 0;
+            timeSlots.forEach((slot, index) => {
+                const slotElement = document.createElement('div');
+                slotElement.className = 'time-slot';
+                slotElement.textContent = formatTime(slot);
+                slotElement.dataset.time = slot;
+                slotElement.setAttribute('role', 'option');
+                slotElement.setAttribute('tabindex', '0');
+
+                const isBooked = appointments.some(appt =>
+                    appt.date === selectedDate && appt.time === slot && appt.status !== 'cancelled'
+                );
+
+                if (isBooked) {
+                    slotElement.classList.add('booked');
+                    slotElement.title = 'Slot is already booked';
+                    slotElement.setAttribute('aria-disabled', 'true');
                 } else {
-                    alert('Incorrect password. Please try again.');
+                    availableCount++;
+                    slotElement.classList.add('available');
+                    slotElement.title = 'Press Enter or click to select this slot';
+
+                    const selectSlot = () => {
+                        $$('.time-slot').forEach(el => el.classList.remove('selected'));
+                        slotElement.classList.add('selected');
+                        selectedTimeSlot = slot;
+                        checkBookingForm();
+                        announce(`${formatTime(slot)} selected`);
+                    };
+
+                    slotElement.addEventListener('click', selectSlot);
+                    slotElement.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectSlot();
+                        }
+                    });
                 }
-            })
-            .catch(() => alert('Login failed. Please try again.'));
-        });
+
+                slotsContainer.appendChild(slotElement);
+            });
+
+            // Show no-slots message if all booked
+            if (availableCount === 0 && timeSlots.length > 0) {
+                slotsContainer.innerHTML = `
+                    <div class="no-slots-message" role="status" aria-live="polite">
+                        <svg class="no-slots-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <h3 class="no-slots-title">No available slots</h3>
+                        <p class="no-slots-hint">All time slots are booked for ${formatDate(selectedDate)}. Please select another date.</p>
+                    </div>
+                `;
+                announce(`All slots booked for ${formatDate(selectedDate)}. Please choose another date.`);
+            }
+
+            // Update time error visibility
+            const timeError = $('#time-error');
+            if (timeError) {
+                timeError.classList.toggle('visible', timeSlots.length > 0 && selectedTimeSlot === null && availableCount > 0);
+            }
+        }
         
-        // Load appointments for owner dashboard
-        function loadAppointments() {
-            const container = document.getElementById('appointments-container');
-            
-            if (appointments.length === 0) {
-                container.innerHTML = '<p>No appointments found.</p>';
+        // ============================================
+        // Booking Confirmation
+        // ============================================
+        
+        $('#confirm-booking').addEventListener('click', async () => {
+            if (!validateAllFields()) {
+                showToast('Please fill in all required fields correctly', 'error');
                 return;
             }
             
-            // Sort appointments by date and time
-            const sortedAppointments = [...appointments].sort((a, b) => {
-                if (a.date !== b.date) {
-                    return new Date(a.date) - new Date(b.date);
+            const name = $('#customer-name').value.trim();
+            const email = $('#customer-email').value.trim();
+            const phone = $('#customer-phone').value.trim();
+            const service = $('#service-type').value;
+            const notes = $('#special-notes').value.trim();
+            const date = $('#booking-date').value;
+            const time = selectedTimeSlot;
+            
+            // Double-check slot availability
+            const isBooked = appointments.some(appt => 
+                appt.date === date && appt.time === time && appt.status !== 'cancelled'
+            );
+            
+            if (isBooked) {
+                showToast('This time slot was just booked by someone else. Please select another.', 'error');
+                loadTimeSlots();
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Try API first
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, service, notes, date, time })
+                });
+                
+                if (!response.ok) throw new Error('API request failed');
+                
+                const newAppointment = await response.json();
+                
+                // Update local storage
+                appointments = appointments.filter(a => a.id !== newAppointment.id);
+                appointments.push(newAppointment);
+                localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
+                
+            } catch (e) {
+                // Fallback to local storage only
+                const appointment = {
+                    id: Date.now(),
+                    name, email, phone, service, notes, date, time,
+                    status: 'confirmed',
+                    createdAt: new Date().toISOString()
+                };
+                
+                appointments.push(appointment);
+                localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
+            } finally {
+                hideLoading();
+            }
+            
+            // Show confirmation modal
+            const confirmed = await showModal({
+                title: 'Appointment Confirmed!',
+                message: 'Your appointment has been successfully booked. We\'ve sent a confirmation to your email.',
+                icon: 'success',
+                details: {
+                    'Date': formatDate(date),
+                    'Time': formatTime(time),
+                    'Service': service.charAt(0).toUpperCase() + service.slice(1),
+                    'Email': email
+                },
+                confirmText: 'Done',
+                cancelText: '',
+                icsData: {
+                    title: `MagShine Appointment: ${service.charAt(0).toUpperCase() + service.slice(1)}`,
+                    description: `Appointment with MagShine for ${service}.${notes ? ` Notes: ${notes}` : ''}`,
+                    startDate: date,
+                    startTime: time,
+                    endTime: `${parseInt(time.split(':')[0]) + 1}:${time.split(':')[1]}`,
+                    organizerEmail: email
+                },
+                onConfirm: () => {}
+            });
+            
+            // Reset form
+            $('#customer-name').value = '';
+            $('#customer-email').value = '';
+            $('#customer-phone').value = '';
+            $('#service-type').value = '';
+            $('#special-notes').value = '';
+            selectedTimeSlot = null;
+            $$('.time-slot').forEach(el => el.classList.remove('selected'));
+            $('#confirm-booking').disabled = true;
+            clearFormErrors();
+            
+            // Reload time slots
+            loadTimeSlots();
+            
+            showToast('Appointment booked successfully!', 'success');
+        });
+        
+        // ============================================
+        // Owner Authentication
+        // ============================================
+        
+        $('#login-owner').addEventListener('click', async () => {
+            const password = $('#owner-password').value;
+            
+            if (!password) {
+                showToast('Please enter the owner password', 'error');
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    $('#owner-password').value = '';
+                    showView('owner-dashboard-view');
+                    loadAppointments();
+                    showToast('Welcome back, owner!', 'success');
+                } else {
+                    showToast('Incorrect password. Please try again.', 'error');
                 }
+            } catch (e) {
+                showToast('Login failed. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        });
+        
+        // ============================================
+        // Owner Dashboard
+        // ============================================
+        
+        function loadAppointments() {
+            const container = $('#appointments-container');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="16" y1="2" x2="16" y2="6"/>
+                            <line x1="8" y1="2" x2="8" y2="6"/>
+                            <line x1="3" y1="10" x2="21" y2="10"/>
+                        </svg>
+                        <h3 class="empty-state-title">No appointments yet</h3>
+                        <p class="empty-state-message">When customers book appointments, they'll appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sortedAppointments = [...appointments].sort((a, b) => {
+                if (a.date !== b.date) return new Date(a.date) - new Date(b.date);
                 return a.time.localeCompare(b.time);
             });
             
@@ -597,74 +1688,199 @@
             sortedAppointments.forEach(appt => {
                 const apptElement = document.createElement('div');
                 apptElement.className = 'appointment-item';
-                
+
+                const statusLabel = appt.status === 'confirmed' ? 'Confirmed' : 'Cancelled';
+                const actionBtn = appt.status === 'confirmed'
+                    ? `<button class="btn btn-danger btn-sm" data-action="cancel" data-id="${appt.id}">Cancel</button>`
+                    : `<button class="btn btn-success btn-sm" data-action="restore" data-id="${appt.id}">Restore</button>`;
+
+                const copyDetails = `Name: ${appt.name}
+Service: ${appt.service}
+Date: ${formatDate(appt.date)}
+Time: ${formatTime(appt.time)}
+Email: ${appt.email}
+Phone: ${appt.phone}
+${appt.notes ? `Notes: ${appt.notes}` : ''}
+Status: ${statusLabel}
+Booked: ${new Date(appt.createdAt).toLocaleString()}`;
+
                 apptElement.innerHTML = `
-                    <h4>${appt.name} - ${appt.service}</h4>
-                    <p><strong>Date:</strong> ${formatDate(appt.date)}</p>
-                    <p><strong>Time:</strong> ${appt.time}</p>
-                    <p><strong>Contact:</strong> ${appt.email} | ${appt.phone}</p>
-                    <p><strong>Notes:</strong> ${appt.notes || 'None'}</p>
-                    <p><strong>Status:</strong> <span class="status status-${appt.status}">${appt.status}</span></p>
-                    <p><strong>Booked:</strong> ${new Date(appt.createdAt).toLocaleString()}</p>
-                    ${appt.status === 'confirmed' ? 
-                      `<button class="btn btn-danger" onclick="cancelAppointment(${appt.id})">Cancel</button>` : 
-                      `<button class="btn btn-success" onclick="restoreAppointment(${appt.id})">Restore</button>`
-                    }
+                    <div class="appointment-header">
+                        <h4>${escapeHtml(appt.name)} - ${escapeHtml(appt.service)}</h4>
+                        <span class="status status-${appt.status}">${statusLabel}</span>
+                    </div>
+                    <div class="appointment-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value">${formatDate(appt.date)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Time</span>
+                            <span class="detail-value">${formatTime(appt.time)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Contact</span>
+                            <span class="detail-value">${escapeHtml(appt.email)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone</span>
+                            <span class="detail-value">${escapeHtml(appt.phone)}</span>
+                        </div>
+                    </div>
+                    ${appt.notes ? `
+                    <div class="appointment-details" style="margin-bottom: 16px;">
+                        <div class="detail-item" style="grid-column: 1 / -1;">
+                            <span class="detail-label">Notes</span>
+                            <span class="detail-value">${escapeHtml(appt.notes)}</span>
+                        </div>
+                    </div>
+                    ` : ''}
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
+                        Booked: ${new Date(appt.createdAt).toLocaleString()}
+                    </p>
+                    <div class="appointment-actions">
+                        ${actionBtn}
+                        <button class="copy-btn" data-copy="${escapeHtml(copyDetails)}" aria-label="Copy appointment details">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                    </div>
                 `;
-                
+
                 container.appendChild(apptElement);
+            });
+
+            // Add event listeners for action buttons
+            container.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', handleAppointmentAction);
+            });
+
+            // Add event listeners for copy buttons
+            container.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', handleCopyDetails);
             });
         }
         
-        // Cancel appointment (owner function)
-        function cancelAppointment(id) {
-            if (confirm('Are you sure you want to cancel this appointment?')) {
-                appointments = appointments.map(appt => {
-                    if (appt.id === id) {
-                        return {...appt, status: 'cancelled'};
-                    }
-                    return appt;
-                });
-                
-                localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
-                loadAppointments();
-                loadTimeSlots(); // Refresh time slots to show newly available slot
-            }
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
-        // Restore appointment (owner function)
-        function restoreAppointment(id) {
-            if (confirm('Are you sure you want to restore this appointment?')) {
-                appointments = appointments.map(appt => {
-                    if (appt.id === id) {
-                        return {...appt, status: 'confirmed'};
-                    }
-                    return appt;
+        async function handleAppointmentAction(e) {
+            const btn = e.currentTarget;
+            const action = btn.dataset.action;
+            const id = parseInt(btn.dataset.id, 10);
+            const appt = appointments.find(a => a.id === id);
+            
+            if (!appt) return;
+            
+            if (action === 'cancel') {
+                const confirmed = await showModal({
+                    title: 'Cancel Appointment',
+                    message: `Are you sure you want to cancel the appointment for ${appt.name}?`,
+                    icon: 'warning',
+                    confirmText: 'Yes, Cancel',
+                    cancelText: 'Keep Appointment'
                 });
                 
-                localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
-                loadAppointments();
-                loadTimeSlots(); // Refresh time slots to show newly booked slot
+                if (!confirmed) return;
+                
+                appt.status = 'cancelled';
+            } else if (action === 'restore') {
+                const confirmed = await showModal({
+                    title: 'Restore Appointment',
+                    message: `Are you sure you want to restore the appointment for ${appt.name}?`,
+                    icon: 'info',
+                    confirmText: 'Yes, Restore',
+                    cancelText: 'Keep Cancelled'
+                });
+                
+                if (!confirmed) return;
+                
+                appt.status = 'confirmed';
             }
+            
+            localStorage.setItem('magshine-appointments', JSON.stringify(appointments));
+            
+            // Try to sync with API
+            try {
+                await fetch(`/api/appointments/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: appt.status })
+                });
+            } catch (e) {
+                // API sync failed, but local storage updated
+            }
+            
+            loadAppointments();
+            loadTimeSlots();
+            showToast(`Appointment ${action === 'cancel' ? 'cancelled' : 'restored'}`, 'success');
         }
-        
-        // Logout owner
-        document.getElementById('logout-owner').addEventListener('click', () => {
+
+        function handleCopyDetails(e) {
+            const btn = e.currentTarget;
+            const text = btn.dataset.copy;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.classList.add('copied');
+                btn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Copied!
+                `;
+                showToast('Appointment details copied!', 'success');
+                announce('Appointment details copied to clipboard');
+
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                        </svg>
+                        Copy
+                    `;
+                }, 2000);
+            }).catch(() => {
+                showToast('Failed to copy. Please try again.', 'error');
+            });
+        }
+
+        $('#logout-owner').addEventListener('click', () => {
             showView('access-view');
         });
         
-        // Sync with Google Calendar
-        document.getElementById('sync-calendar').addEventListener('click', () => {
-            alert('Google Calendar integration would be implemented here. In a production app, this would connect to the Google Calendar API to sync appointments.');
+        $('#sync-calendar').addEventListener('click', async () => {
+            showLoading();
+            try {
+                await fetch('/api/sync-calendar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                showToast('Calendar sync initiated!', 'success');
+            } catch (e) {
+                showToast('Calendar sync failed. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         });
         
-        // Helper function to format date
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString(undefined, options);
-        }
+        // ============================================
+        // Initialization
+        // ============================================
         
-        // Initial load of time slots
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        $('#booking-date').min = today;
+        $('#booking-date').value = today;
+        
+        // Initial load
         loadTimeSlots();
     </script>
 </body>
