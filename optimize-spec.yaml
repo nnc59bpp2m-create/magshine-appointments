@@ -1,0 +1,64 @@
+name: magshine-booking-ux
+description: Optimize booking flow UI/UX for slot selection, confirmation state, and empty states
+metric:
+  primary:
+    name: ux_quality_score
+    type: hard
+    direction: maximize
+    target: 80
+  degenerate_gates:
+    - name: html_form_field_count
+      operator: ">="
+      threshold: 6
+    - name: html_label_association_rate
+      operator: ">="
+      threshold: 0.9
+    - name: js_error_handling
+      operator: "=="
+      threshold: true
+    - name: css_focus_visible
+      operator: "=="
+      threshold: true
+    - name: css_reduced_motion
+      operator: "=="
+      threshold: true
+    - name: js_uses_alert
+      operator: "=="
+      threshold: false
+  diagnostics:
+    - html_aria_attributes
+    - html_help_text_count
+    - js_has_loading_state
+    - js_has_inline_validation
+    - html_has_confirmation_modal
+    - html_has_slot_groups
+    - css_has_loading_animations
+    - bundle_total_js_bytes
+    - bundle_css_bytes
+measurement:
+  command: "python measure_booking_ux.py"
+  working_directory: "."
+  timeout_seconds: 30
+scope:
+  mutable:
+    - "frontend/components/booking.html"
+    - "frontend/js/booking.js"
+    - "frontend/css/core.css"
+    - "frontend/index.html"
+  immutable:
+    - "main.py"
+    - "requirements.txt"
+    - "measure_booking_ux.py"
+constraints:
+  - "Must retain existing booking data and API contract"
+  - "Must not change app host bindings"
+  - "Must not rework internal dev-server ports"
+execution:
+  mode: serial
+  max_concurrent: 1
+  backend: subagent
+stopping:
+  max_iterations: 8
+  max_hours: 2
+  plateau_iterations: 3
+  target_reached: true

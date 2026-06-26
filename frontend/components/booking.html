@@ -14,41 +14,47 @@
             <div>
               <label for="bookingDate" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Date</label>
               <input type="date" id="bookingDate" name="date" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required />
+              <div id="date-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
             <div>
               <label for="userSlot" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Time Slot</label>
-              <select id="userSlot" name="slot_time" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required>
-                <option value="">Select date first</option>
-              </select>
+              <div id="slot-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3" role="listbox" aria-label="Available time slots" aria-required="true"></div>
+              <input type="hidden" id="userSlot" name="slot_time" required />
+              <div id="slot-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="bookName" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Full Name</label>
-              <input type="text" id="bookName" name="name" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="John Tan" required />
+              <input type="text" id="bookName" name="name" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="John Tan" required autocomplete="name" />
+              <div id="name-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
             <div>
               <label for="bookPhone" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Phone (WhatsApp)</label>
-              <input type="tel" id="bookPhone" name="phone" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="+60 18 215 3099" required />
+              <input type="tel" id="bookPhone" name="phone" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="+60 18 215 3099" required autocomplete="tel" />
+              <div id="phone-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
           </div>
 
           <div>
             <label for="bookEmail" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Email</label>
-            <input type="email" id="bookEmail" name="email" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="john@email.com" />
+            <input type="email" id="bookEmail" name="email" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="john@email.com" autocomplete="email" />
+            <div id="email-error" class="field-error" role="alert" aria-live="polite"></div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="serviceSelect" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Service</label>
-              <select id="serviceSelect" name="serviceId" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required>
+              <select id="serviceSelect" name="serviceId" class="input-field w-full rounded-xl px-4 py-3.5 text-base" required aria-required="true">
                 <option value="">Select service</option>
               </select>
+              <div id="service-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
             <div>
               <label for="bookVehicle" class="block text-xs font-semibold text-brand-textDim uppercase tracking-wider mb-2">Vehicle Registration</label>
-              <input type="text" id="bookVehicle" name="vehicleReg" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="ABC 1234" style="text-transform: uppercase" />
+              <input type="text" id="bookVehicle" name="vehicleReg" class="input-field w-full rounded-xl px-4 py-3.5 text-base" placeholder="ABC 1234" style="text-transform: uppercase" autocomplete="off" />
+              <div id="vehicle-error" class="field-error" role="alert" aria-live="polite"></div>
             </div>
           </div>
 
@@ -57,7 +63,16 @@
             <textarea id="bookNotes" name="notes" rows="3" class="input-field w-full rounded-xl px-4 py-3.5 text-base resize-none" placeholder="Paint condition, specific concerns, color..."></textarea>
           </div>
 
-          <button type="submit" id="bookBtn" class="btn-primary w-full py-4 rounded-xl text-base font-semibold">Confirm Booking</button>
+          <button type="submit" id="bookBtn" class="btn-primary w-full py-4 rounded-xl text-base font-semibold" disabled>
+            <span class="btn-text">Confirm Booking</span>
+            <span class="btn-loading hidden" aria-hidden="true">
+              <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25" />
+                <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1" stroke-linecap="round" />
+              </svg>
+              <span>Booking...</span>
+            </span>
+          </button>
 
           <p class="text-xs text-brand-textDim/60 text-center">By submitting, you agree to our booking terms. No same-day bookings accepted.</p>
         </form>
